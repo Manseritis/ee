@@ -65,6 +65,7 @@ public class UserServiceImpl implements UserService {
             if(user==null) return "注册失败";
             mapper.addDirectory(new DirectoryRequest(userName,0,user.getId(),1));
         }
+
         return null;
     }
 
