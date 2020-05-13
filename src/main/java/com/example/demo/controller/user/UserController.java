@@ -55,8 +55,6 @@ public class UserController {
     @PostMapping("/add-directory")
     @ApiOperation(value = "新建文件夹")
     public ResponseDTO addDirectory(@RequestBody @Validated DirectoryRequest req,HttpServletRequest request){
-        request.getHeader("token");
-
         String msg = service.addDirectory(req);
         return msg==null?ResponseDTO.success("yes"):ResponseDTO.error("500",msg);
     }
@@ -78,7 +76,7 @@ public class UserController {
 
 
     @PostMapping("/upload")
-    @ApiOperation(value = "注册")
+    @ApiOperation(value = "上传文件")
     public ResponseDTO upload(FileRequest fileReq) throws IOException {
         String upload = service.upload(fileReq);
         return ResponseDTO.success("上传成功");
