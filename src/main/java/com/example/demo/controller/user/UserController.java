@@ -30,11 +30,11 @@ import java.util.UUID;
 @RestController
 @Slf4j
 @RequestMapping("/api")
-@CrossOrigin(allowCredentials="true")
 public class UserController {
     @Resource
     UserService service;
 
+    @CrossOrigin
     @PostMapping("/login")
     @ApiOperation(value = "登录")
     public ResponseDTO<List<SystemUser>> login(@RequestBody @Validated UserRequest reqUser, HttpServletRequest req){
