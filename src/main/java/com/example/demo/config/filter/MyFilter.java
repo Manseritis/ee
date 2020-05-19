@@ -13,7 +13,7 @@ import java.io.IOException;
  */
 
 @Component
-@WebFilter(urlPatterns = {"/api/login"})
+@WebFilter(urlPatterns = {"/api/login","/api/register"})
 public class MyFilter implements Filter {
 
         @Override

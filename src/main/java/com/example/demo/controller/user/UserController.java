@@ -4,6 +4,7 @@ import com.example.demo.config.exception.ResponseDTO;
 import com.example.demo.model.domain.SystemUser;
 import com.example.demo.model.request.DirectoryRequest;
 import com.example.demo.model.request.FileRequest;
+import com.example.demo.model.request.IdRequest;
 import com.example.demo.model.request.UserRequest;
 import com.example.demo.model.response.LoginResponse;
 import com.example.demo.service.UserService;
@@ -17,8 +18,10 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -78,7 +81,24 @@ public class UserController {
     @PostMapping("/upload")
     @ApiOperation(value = "上传文件")
     public ResponseDTO upload(FileRequest fileReq) throws IOException {
-        String upload = service.upload(fileReq);
-        return ResponseDTO.success("上传成功");
+        String msg = service.upload(fileReq);
+        return msg==null?ResponseDTO.success("yes"):ResponseDTO.error("500",msg);
     }
+
+
+    @GetMapping("/delete")
+    @ApiOperation(value = "删除文件")
+    public ResponseDTO delete(IdRequest req){
+        String msg = service.delete(req);
+
+        return msg==null?ResponseDTO.success("yes"):ResponseDTO.error("500",msg);
+    }
+
+    @GetMapping("/download")
+    @ApiOperation(value = "下载")
+    public ResponseDTO download(IdRequest req, HttpServletResponse resp) {
+        service.download(req,resp);
+        return null;
+    }
+
 }

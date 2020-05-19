@@ -7,6 +7,14 @@
     <insert id="userRegister">
         INSERT INTO system_user(username,password,code) VALUES(#{username},#{password},#{code})
     </insert>
+    <delete id="deleteFiles">
+        delete from user_files
+        where
+        id in (
+        <foreach collection="list" item="i" index="index" separator=",">${i.id}
+        </foreach>)
+
+    </delete>
     <select id="getUserByName" resultType="com.example.demo.model.domain.SystemUser">
         select * from system_user where username = #{username}
     </select>
@@ -22,5 +30,8 @@
     </select>
     <select id="getDirectory" resultType="java.util.Map">
         select * from user_files where user_id = #{userId}
+    </select>
+    <select id="getChildByParentId" resultType="java.util.Map">
+        select * from user_files where parent_id = #{parentId}
     </select>
 </mapper>

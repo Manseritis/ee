@@ -47,4 +47,8 @@ public interface UserMapper {
      * @return
      */
     List<Map<String,Object>> getDirectory(Integer id);
+
+    List<Map> getChildByParentId(Integer parentId);
+
+    void deleteFiles(List<Map> list);
 }

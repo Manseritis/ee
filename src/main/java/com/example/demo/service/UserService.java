@@ -3,10 +3,12 @@ package com.example.demo.service;
 import com.example.demo.model.domain.SystemUser;
 import com.example.demo.model.request.DirectoryRequest;
 import com.example.demo.model.request.FileRequest;
+import com.example.demo.model.request.IdRequest;
 import com.example.demo.model.request.UserRequest;
 import io.swagger.models.auth.In;
 import org.apache.tomcat.jni.Directory;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -43,4 +45,9 @@ public interface UserService {
 
 
     String upload(FileRequest fileReq) throws IOException;
+
+
+    String delete(IdRequest parentId);
+
+    String download(IdRequest fileId, HttpServletResponse resp);
 }

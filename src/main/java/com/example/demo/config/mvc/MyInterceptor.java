@@ -21,9 +21,11 @@ public class MyInterceptor implements HandlerInterceptor {
                 "Origin, X-Requested-With, Content-Type, Accept,token");
         response.setHeader("Access-Control-Max-Age", "3600");
         response.setCharacterEncoding("UTF-8");
-
-
-        String token = request.getHeader("token");
+        String token = null;
+        // 下载文件
+        String requestURI = request.getRequestURI();
+        token = request.getHeader("token");
+        if("/api/download".equals(requestURI)) token = request.getParameter("token");
         if(token==null){
             response.getWriter().write("{\"errorMsg\":\"token不能为空\"}");
             return false;
