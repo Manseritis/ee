@@ -6,14 +6,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.context.request.RequestContextHolder;
-import org.springframework.web.context.request.ServletRequestAttributes;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -23,9 +20,7 @@ import java.util.List;
 public class ParseAnno {
 
     public static boolean checkPermissions(HttpServletResponse resp) throws ClassNotFoundException, IOException {
-        String demoPath = System.getProperty("user.dir")+"\\src\\main\\java\\com\\example\\demo\\controller";
-        File file = new File(demoPath);
-        List<String> files = getFile(file, new ArrayList<>());
+        List<String> files = Utils.getFiles();
         for (String s : files) {
             Class<?> aClass = Class.forName(s);
             Method[] methods = aClass.getMethods();
@@ -45,9 +40,8 @@ public class ParseAnno {
                         RequestMapping annotation = method.getAnnotation(RequestMapping.class);
                         str = annotation.value()[0];
                     }
-                    HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.getRequestAttributes()).getRequest();
+                    HttpServletRequest request = Utils.getRequest();
                     String requestURI = request.getRequestURI();
-
                     if(!requestURI.equals(str)) continue;
                     // 有该注解
                     CustomPermissions annotation = method.getAnnotation(CustomPermissions.class);
@@ -66,21 +60,20 @@ public class ParseAnno {
     }
 
 
-    private static List<String> getFile(File file, List<String> result){
+    public static void getFile(File file, List<String> result){
         String[] list = file.list();
         for (String str : list) {
-            File file1 = new File(file + "\\"+str);
+            File file1 = new File(file + File.separator +str);
             if(file1.isFile()){
-                if(file1.toString().contains(".java")){
+                if(file1.toString().contains(".class")){
                     String path = file1.toString();
-                    path = path.replaceAll("\\\\","\\.").substring(path.indexOf("com"),path.indexOf(".java"));
-                    result.add(path);
+                    path = path.replaceAll("\\\\","\\.");
+                    result.add(path.substring(path.indexOf(".com")+1,path.lastIndexOf(".class")));
                 }
             }else {
-                getFile(new File(file +"\\"+ str), result);
+                getFile(new File(file.toString() +"\\"+ str), result);
             }
         }
-        return result;
     }
 
 }

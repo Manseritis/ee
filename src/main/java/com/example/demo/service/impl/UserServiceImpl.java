@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.core.Utils;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.model.domain.SystemUser;
 import com.example.demo.model.domain.UserDirectorys;
@@ -43,10 +44,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public String addDirectory(DirectoryRequest req) {
         String parentDircetory = getParentDircetory(req.getParentId());
+        log.info("新增文件getParentDircetory():" + parentDircetory);
         File addFile = new File(parentDircetory+req.getDirectoryName());
         if(!addFile.exists()){
             boolean mkdir = addFile.mkdir();
-            if(!mkdir)  return "穿件文件失败";
+            if(!mkdir)  return "创建文件失败";
         }else{
             return "文件夹已存在";
         }
@@ -63,14 +65,16 @@ public class UserServiceImpl implements UserService {
     @Override
     public String userRegister(UserRequest req) {
         mapper.userRegister(req);
-        String path = Global.class.getResource("/").getPath()+"/cloud_driver";
+        String path = Utils.getCurrentPath();
+        path = path +"cloud_driver" + File.separator;
         String userName = req.getUsername();
-        path = path +"/"+userName;
+        path = path + userName;
         // 得到用户根目录
         File file = new File(path);
         if(!file.exists()){
             // 用户根目录不存在 异常情况
-            file.mkdir();
+            boolean mkdir = file.mkdirs();
+            if(!mkdir) return "创建用户目录失败";
             SystemUser user = mapper.getUserByName(userName);
             if(user==null) return "注册失败";
             mapper.addDirectory(new DirectoryRequest(userName,0,user.getId(),1));
@@ -90,6 +94,7 @@ public class UserServiceImpl implements UserService {
             return "根路径下不可上传文件";
         }
         String parentDircetory = getParentDircetory(fileReq.getParentId());
+        log.info("上传文件的地址:"+ parentDircetory + fileReq.getFile().getOriginalFilename());
         MultipartFile file = fileReq.getFile();
         String fileName = file.getOriginalFilename();
         try {
@@ -185,12 +190,11 @@ public class UserServiceImpl implements UserService {
         }
     }
 
-
     private String getParentDircetory(Integer parentId1){
         SystemUser user = getUser();
-        String path = Global.class.getResource("/").getPath()+"/cloud_driver";
+        String path = Utils.getCurrentPath() + "cloud_driver" + File.separator;
         String userName = user.getUserName();
-        path = path +"/"+userName;
+        path = path + userName;
         // 得到用户根目录
         String str = "/";
         boolean flag = true;
@@ -209,7 +213,7 @@ public class UserServiceImpl implements UserService {
                 parentId = directorys.getParentId();
             }
         }
-        return path +"/"+str;
+        return path + File.separator + str ;
     }
 
     private SystemUser getUser(){
